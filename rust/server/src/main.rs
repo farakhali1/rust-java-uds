@@ -42,16 +42,13 @@ fn main() {
 
     println!("Server is waiting for client messages...");
 
-    for stream in listener.incoming() {
-        match stream {
-            Ok(stream) => {
-                std::thread::spawn(move || {
-                    handle_client(stream);
-                });
-            }
-            Err(err) => {
-                println!("Error accepting connection: {:?}", err);
-            }
+    match listener.accept() {
+        Ok((stream, _)) => {
+            println!("Client connected!");
+            handle_client(stream);
+        }
+        Err(err) => {
+            println!("Error accepting connection: {:?}", err);
         }
     }
 }
