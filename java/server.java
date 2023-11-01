@@ -3,6 +3,8 @@ import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.file.*;
+import temp.tutorial.calculator;
+import temp.tutorial.result;
 
 public class server {
   public static void main(String[] args) throws IOException {
@@ -21,17 +23,28 @@ public class server {
           ByteBuffer buf = ByteBuffer.allocate(64);
           int bytesRead = clientChannel.read(buf);
           if (bytesRead > 0) {
-            buf.flip();
+
             byte[] receivedData = new byte[bytesRead];
-            buf.get(receivedData);
-            String message = new String(receivedData);
+            buf.flip();
+            calculator message = calculator.parseFrom(buf.get(receivedData));
+            int value1 = message.getX();
+            int value2 = message.getY();
+            System.out.println("Received message from client: number: " +
+                               value1 + " number : " + value2);
 
-            System.out.println("Received message from client: " + message);
-            String responseMessage = "Server received your message: " + message;
+            int resultValue = value1 + value2 + 1;
+
+            result.Builder messageBuilder =
+                result.newBuilder().setRes(resultValue);
+
+            result responseMessage = messageBuilder.build();
+
             ByteBuffer responseBuffer =
-                ByteBuffer.wrap(responseMessage.getBytes());
+                ByteBuffer.wrap(responseMessage.toString().getBytes());
 
+            // responseBuffer.position(0);
             clientChannel.write(responseBuffer);
+            // responseBuffer.flip();
           }
         }
       }

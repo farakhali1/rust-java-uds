@@ -6,6 +6,8 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.file.*;
 import java.util.concurrent.TimeUnit;
+import temp.tutorial.calculator;
+import temp.tutorial.result;
 
 public class client {
   public static void main(String[] args) throws Exception {
@@ -14,10 +16,10 @@ public class client {
     var socketAddress = UnixDomainSocketAddress.of(socketPath);
 
     try (SocketChannel clientChannel = SocketChannel.open(socketAddress)) {
-      String message = "Hello world";
+      calculator message = calculator.newBuilder().setX(2).setY(4).build();
 
       while (true) {
-        ByteBuffer sendBuffer = ByteBuffer.wrap(message.getBytes());
+        ByteBuffer sendBuffer = ByteBuffer.wrap(message.toString().getBytes());
         clientChannel.write(sendBuffer);
 
         ByteBuffer receiveBuffer = ByteBuffer.allocate(64);
@@ -25,11 +27,12 @@ public class client {
         if (bytesRead > 0) {
           receiveBuffer.flip();
           byte[] receivedData = new byte[bytesRead];
-          receiveBuffer.get(receivedData);
-          String responseMessage = new String(receivedData);
+          // receiveBuffer.get(receivedData);
 
-          System.out.println("Received response from server: " +
-                             responseMessage);
+          result response = result.parseFrom(receiveBuffer.get(receivedData));
+
+          int value1 = response.getRes();
+          System.out.println("Received message from server: " + value1);
 
           TimeUnit.SECONDS.sleep(1);
         } else {
