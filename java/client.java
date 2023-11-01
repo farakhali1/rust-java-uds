@@ -17,9 +17,10 @@ public class client {
 
     try (SocketChannel clientChannel = SocketChannel.open(socketAddress)) {
       calculator message = calculator.newBuilder().setX(2).setY(4).build();
+      byte[] messageBytes = message.toByteArray();
 
       while (true) {
-        ByteBuffer sendBuffer = ByteBuffer.wrap(message.toString().getBytes());
+        ByteBuffer sendBuffer = ByteBuffer.wrap(messageBytes);
         clientChannel.write(sendBuffer);
 
         ByteBuffer receiveBuffer = ByteBuffer.allocate(64);
@@ -27,9 +28,9 @@ public class client {
         if (bytesRead > 0) {
           receiveBuffer.flip();
           byte[] receivedData = new byte[bytesRead];
-          // receiveBuffer.get(receivedData);
+          receiveBuffer.get(receivedData);
 
-          result response = result.parseFrom(receiveBuffer.get(receivedData));
+          result response = result.parseFrom(receivedData);
 
           int value1 = response.getRes();
           System.out.println("Received message from server: " + value1);

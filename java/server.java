@@ -23,10 +23,10 @@ public class server {
           ByteBuffer buf = ByteBuffer.allocate(64);
           int bytesRead = clientChannel.read(buf);
           if (bytesRead > 0) {
-
-            byte[] receivedData = new byte[bytesRead];
             buf.flip();
-            calculator message = calculator.parseFrom(buf.get(receivedData));
+            byte[] receivedData = new byte[bytesRead];
+            buf.get(receivedData);
+            calculator message = calculator.parseFrom(receivedData);
             int value1 = message.getX();
             int value2 = message.getY();
             System.out.println("Received message from client: number: " +
@@ -34,17 +34,12 @@ public class server {
 
             int resultValue = value1 + value2 + 1;
 
-            result.Builder messageBuilder =
-                result.newBuilder().setRes(resultValue);
+            result responseMessage =
+                result.newBuilder().setRes(resultValue).build();
+            byte[] responseBytes = responseMessage.toByteArray();
 
-            result responseMessage = messageBuilder.build();
-
-            ByteBuffer responseBuffer =
-                ByteBuffer.wrap(responseMessage.toString().getBytes());
-
-            // responseBuffer.position(0);
+            ByteBuffer responseBuffer = ByteBuffer.wrap(responseBytes);
             clientChannel.write(responseBuffer);
-            // responseBuffer.flip();
           }
         }
       }
