@@ -6,7 +6,7 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.file.*;
 import java.util.concurrent.TimeUnit;
-import temp.tutorial.calculator;
+import temp.tutorial.input;
 import temp.tutorial.result;
 
 public class client {
@@ -16,7 +16,7 @@ public class client {
     var socketAddress = UnixDomainSocketAddress.of(socketPath);
 
     try (SocketChannel clientChannel = SocketChannel.open(socketAddress)) {
-      calculator message = calculator.newBuilder().setX(2).setY(4).build();
+      input message = input.newBuilder().setX(2).setY(4).build();
       byte[] messageBytes = message.toByteArray();
 
       while (true) {

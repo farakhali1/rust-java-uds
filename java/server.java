@@ -3,7 +3,7 @@ import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.file.*;
-import temp.tutorial.calculator;
+import temp.tutorial.input;
 import temp.tutorial.result;
 
 public class server {
@@ -26,7 +26,7 @@ public class server {
             buf.flip();
             byte[] receivedData = new byte[bytesRead];
             buf.get(receivedData);
-            calculator message = calculator.parseFrom(receivedData);
+            input message = input.parseFrom(receivedData);
             int value1 = message.getX();
             int value2 = message.getY();
             System.out.println("Received message from client: number: " +
