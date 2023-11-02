@@ -7,7 +7,7 @@ This repository contains IPC communication example between `rust` and `java` ove
 
 # build java clinet/server
 cd ./java
-protoc -I=. --java_out=. calculator.proto
+protoc -I=../proto --java_out=. ../proto/data.proto
 javac {client/server}.java temp/tutorial/calculatorProtos.java -cp .:protobuf-java-3.24.0-RC1.jar
 # you need to link "protobuf-java-3.24.0-RC1.jar" file (https://jar-download.com/artifacts/com.google.protobuf/protobuf-java/3.24.0/source-code)
 
