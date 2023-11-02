@@ -45,7 +45,7 @@ fn handle_client(mut stream: std::os::unix::net::UnixStream) {
 }
 
 fn main() {
-    let socket_path = std::env::var("HOME").unwrap() + "/baeldung.socket";
+    let socket_path = std::env::var("HOME").unwrap() + "/my.socket";
 
     let _ = fs::remove_file(&socket_path);
 

@@ -9,7 +9,7 @@ use data::{Input, Result};
 use protobuf::Message;
 
 fn main() {
-    let socket_path = std::env::var("HOME").unwrap() + "/baeldung.socket";
+    let socket_path = std::env::var("HOME").unwrap() + "/my.socket";
 
     match UnixStream::connect(&socket_path) {
         Ok(mut stream) => {

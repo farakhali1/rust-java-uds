@@ -9,7 +9,7 @@ import temp.tutorial.result;
 public class server {
   public static void main(String[] args) throws IOException {
     Path socketPath =
-        Path.of(System.getProperty("user.home")).resolve("baeldung.socket");
+        Path.of(System.getProperty("user.home")).resolve("my.socket");
     var socketAddress = UnixDomainSocketAddress.of(socketPath);
 
     try (ServerSocketChannel serverChannel =

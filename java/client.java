@@ -12,7 +12,7 @@ import temp.tutorial.result;
 public class client {
   public static void main(String[] args) throws Exception {
     Path socketPath =
-        Path.of(System.getProperty("user.home")).resolve("baeldung.socket");
+        Path.of(System.getProperty("user.home")).resolve("my.socket");
     var socketAddress = UnixDomainSocketAddress.of(socketPath);
 
     try (SocketChannel clientChannel = SocketChannel.open(socketAddress)) {
