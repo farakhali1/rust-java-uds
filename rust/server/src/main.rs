@@ -6,17 +6,28 @@ use std::io::Read;
 use std::os::fd::AsRawFd;
 use std::os::unix::net::UnixListener;
 
+include!(concat!(env!("OUT_DIR"), "/proto/mod.rs"));
+use data::{Input, Result};
+use protobuf::Message;
+
 fn handle_client(mut stream: std::os::unix::net::UnixStream) {
     let mut buffer = [0; 64];
     loop {
         match stream.read(&mut buffer) {
             Ok(n) => {
                 if n > 0 {
-                    let message = String::from_utf8_lossy(&buffer[..n]);
-                    println!("Received message from client: {}", message);
+                    let in_msg = Input::parse_from_bytes(&buffer[..n]).unwrap();
+                    println!("New Request fom client");
 
-                    let response = format!("Server received your message: {}", message);
-                    if let Err(err) = write(stream.as_raw_fd(), response.as_bytes()) {
+                    let result = in_msg.x + in_msg.y;
+
+                    let mut out_msg = Result::new();
+                    out_msg.res = result;
+                    // println!("Message response: {:#?}", out_msg);
+                    let out_bytes: Vec<u8> = out_msg.write_to_bytes().unwrap();
+                    println!("Sending Response -> {:?}", out_bytes);
+
+                    if let Err(err) = write(stream.as_raw_fd(), &out_bytes) {
                         println!("Error sending response: {:?}", err);
                         break;
                     }

@@ -1,7 +1,14 @@
 [package]
 name = "server"
-version = "0.1.0"
+version = "1.2.1"
 edition = "2018"
 
 [dependencies]
 nix = "0.22.1"
+protobuf = "3"
+prost = "0.7.0"
+
+[build-dependencies]
+prost-build = "0.7"
+protobuf-codegen = "3"
+protoc-rust = "^2.0"
