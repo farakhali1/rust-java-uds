@@ -16,14 +16,28 @@ public class client {
     var socketAddress = UnixDomainSocketAddress.of(socketPath);
 
     try (SocketChannel clientChannel = SocketChannel.open(socketAddress)) {
-      input message = input.newBuilder().setX(2).setY(4).build();
+      input message =
+          input.newBuilder()
+              .setIntValue(2)
+              .setUintValue(34)
+              .setFloatValue1(1.11111111f)
+              .setFloatValue2(2.00000001f)
+              .setFloatValue3(3.99999991f)
+              .setFloatValue4(4.10000009f)
+              .setFloatValue5(5.11111119f)
+              .setPubkey("dfaASJN675hgkGKH6085blkhkjbgiyhkjg67nbhjfgyuGL669BDj")
+              .setSignature(
+                  "dfaASJN675@gkGKH6085!lkhkjbgiyh#jg67nbhjf&yuGL6$9BDj")
+              .setUid("my-random-uuid")
+              .setFlag(true)
+              .build();
       byte[] messageBytes = message.toByteArray();
 
       while (true) {
         ByteBuffer sendBuffer = ByteBuffer.wrap(messageBytes);
         clientChannel.write(sendBuffer);
 
-        ByteBuffer receiveBuffer = ByteBuffer.allocate(64);
+        ByteBuffer receiveBuffer = ByteBuffer.allocate(2048);
         int bytesRead = clientChannel.read(receiveBuffer);
         if (bytesRead > 0) {
           receiveBuffer.flip();
@@ -31,9 +45,16 @@ public class client {
           receiveBuffer.get(receivedData);
 
           result response = result.parseFrom(receivedData);
-
-          int value1 = response.getRes();
-          System.out.println("Received message from server: " + value1);
+          int res = response.getRes();
+          long uint_value = response.getUintValue();
+          float float_value1 = response.getFloatValue1();
+          float float_value2 = response.getFloatValue2();
+          String pubkey = response.getPubkey();
+          String uid = response.getUid();
+          Boolean flag = response.getFlag();
+          System.out.printf(
+              "\nResponse from server: res: %d, uint_value: %d, float_value1: %.9f, float_value2: %.9f, pubkey: %s, uid: %s, flag: %b",
+              res, uint_value, float_value1, float_value2, pubkey, uid, flag);
 
           TimeUnit.SECONDS.sleep(1);
         } else {

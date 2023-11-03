@@ -10,22 +10,47 @@ include!(concat!(env!("OUT_DIR"), "/proto/mod.rs"));
 use data::{Input, Result};
 use protobuf::Message;
 
+#[allow(unused_variables)]
+
 fn handle_client(mut stream: std::os::unix::net::UnixStream) {
-    let mut buffer = [0; 64];
+    let mut buffer = [0; 2048];
     loop {
         match stream.read(&mut buffer) {
             Ok(n) => {
                 if n > 0 {
-                    let in_msg = Input::parse_from_bytes(&buffer[..n]).unwrap();
+                    let request_message = Input::parse_from_bytes(&buffer[..n]).unwrap();
                     println!("New Request fom client");
 
-                    let result = in_msg.x + in_msg.y;
+                    let int_value = request_message.int_value;
+                    let uint_value = request_message.uint_value;
+                    let float_value1 = request_message.float_value1;
+                    let float_value2 = request_message.float_value2;
+                    let float_value3 = request_message.float_value3;
+                    let float_value4 = request_message.float_value4;
+                    let float_value5 = request_message.float_value5;
+                    let pubkey = request_message.pubkey;
+                    let signature = request_message.signature;
+                    let uid = request_message.uid;
+                    let flag = request_message.flag;
+                    println!(
+                        "\nRequest from client: int_value: {}, uint_value: {}, float_value1: {}, float_value2: {}, float_value3: {}, float_value4: {}, float_value5: {}, pubkey: {},  signature: {}, uid: {}, flag: {}",
+                        int_value, uint_value, float_value1, float_value2, float_value3,
+                        float_value4, float_value5, pubkey, signature, uid, flag);
 
-                    let mut out_msg = Result::new();
-                    out_msg.res = result;
-                    // println!("Message response: {:#?}", out_msg);
-                    let out_bytes: Vec<u8> = out_msg.write_to_bytes().unwrap();
-                    println!("Sending Response -> {:?}", out_bytes);
+                    let result = int_value + uint_value as i32;
+
+                    let mut response_message = Result::new();
+                    response_message.res = result;
+                    response_message.uint_value = uint_value;
+                    response_message.float_value1 = float_value1;
+                    response_message.float_value2 = float_value2;
+                    response_message.pubkey = pubkey;
+                    response_message.uid = uid;
+                    response_message.flag = flag;
+
+                    // println!("Message response: {:#?}", response_message);
+                    let out_bytes: Vec<u8> = response_message.write_to_bytes().unwrap();
+                    // println!("Sending Response -> {:?}", out_bytes);
 
                     if let Err(err) = write(stream.as_raw_fd(), &out_bytes) {
                         println!("Error sending response: {:?}", err);

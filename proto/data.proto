@@ -7,11 +7,25 @@ option java_package = "temp.tutorial";
 option java_outer_classname = "dataProtos";
 
 message input {
-  int32 x = 1;
-  int32 y = 2;
+  int32 int_value = 1;
+  uint64 uint_value = 2;
+  float float_value1 = 3;
+  float float_value2 = 4;
+  float float_value3 = 5;
+  float float_value4 = 6;
+  float float_value5 = 7;
+  string pubkey = 8;
+  string signature = 9;
+  string uid = 10;
+  bool flag = 11;
 }
 
 message result {
   int32 res = 1;
+  uint64 uint_value = 2;
+  float float_value1 = 3;
+  float float_value2 = 4;
+  string pubkey = 5;
+  string uid = 6;
+  bool flag = 7;
 }
-
