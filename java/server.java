@@ -38,10 +38,13 @@ public class server {
             String signature = message.getSignature();
             String uid = message.getUid();
             Boolean flag = message.getFlag();
-            System.out.printf(
-                "\n\nRequest from client: int_value: %d, uint_value: %d, float_value1: %.9f, float_value2: %.9f, float_value3: %.9f, float_value4: %.9f, float_value5: %.9f, pubkey: %s,  signature: %s, uid: %s, flag: %b",
-                int_value, uint_value, float_value1, float_value2, float_value3,
-                float_value4, float_value5, pubkey, signature, uid, flag);
+            // System.out.printf(
+            //     "\n\nRequest from client: int_value: %d, uint_value: %d,
+            //     float_value1: %.9f, float_value2: %.9f, float_value3: %.9f,
+            //     float_value4: %.9f, float_value5: %.9f, pubkey: %s,
+            //     signature: %s, uid: %s, flag: %b", int_value, uint_value,
+            //     float_value1, float_value2, float_value3, float_value4,
+            //     float_value5, pubkey, signature, uid, flag);
 
             int resultValue = int_value + (int)uint_value;
 

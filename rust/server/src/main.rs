@@ -19,7 +19,7 @@ fn handle_client(mut stream: std::os::unix::net::UnixStream) {
             Ok(n) => {
                 if n > 0 {
                     let request_message = Input::parse_from_bytes(&buffer[..n]).unwrap();
-                    println!("New Request fom client");
+                    // println!("New Request fom client");
 
                     let int_value = request_message.int_value;
                     let uint_value = request_message.uint_value;
@@ -32,10 +32,10 @@ fn handle_client(mut stream: std::os::unix::net::UnixStream) {
                     let signature = request_message.signature;
                     let uid = request_message.uid;
                     let flag = request_message.flag;
-                    println!(
-                        "\nRequest from client: int_value: {}, uint_value: {}, float_value1: {}, float_value2: {}, float_value3: {}, float_value4: {}, float_value5: {}, pubkey: {},  signature: {}, uid: {}, flag: {}",
-                        int_value, uint_value, float_value1, float_value2, float_value3,
-                        float_value4, float_value5, pubkey, signature, uid, flag);
+                    // println!(
+                    //     "\nRequest from client: int_value: {}, uint_value: {}, float_value1: {}, float_value2: {}, float_value3: {}, float_value4: {}, float_value5: {}, pubkey: {},  signature: {}, uid: {}, flag: {}",
+                    //     int_value, uint_value, float_value1, float_value2, float_value3,
+                    //     float_value4, float_value5, pubkey, signature, uid, flag);
 
                     let result = int_value + uint_value as i32;
 
