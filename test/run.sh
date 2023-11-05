@@ -48,16 +48,22 @@ parse_args $second_arg
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ "$is_rust_server" -eq 0 ] && [ "$is_java_server" -eq 1 ]; then
-    echo "Running test number "$test_number" with rust client and java server"
+if [ "$is_rust_server" -eq 1 ] && [ "$is_java_server" -eq 0 ]; then
+    echo "Running test number "$test_number" with rust server and java client"
     cd $script_dir/../rust/server
     cargo run &
     sleep 5
     cd $script_dir/../java
     java -cp .:protobuf-java-3.24.0-RC1.jar client $test_number >$script_dir/output.txt
     $script_dir/calculate_performance_stats.sh
-elif [ "$is_rust_server" -eq 1 ] && [ "$is_java_server" -eq 0 ]; then
-    echo "Running java client and rust server"
+elif [ "$is_rust_server" -eq 0 ] && [ "$is_java_server" -eq 1 ]; then
+    echo "Running test number "$test_number" with rust client and java server"
+    cd $script_dir/../java
+    java -cp .:protobuf-java-3.24.0-RC1.jar server &
+    sleep 5
+    cd $script_dir/../rust/client
+    cargo run $test_number  >$script_dir/output.txt
+    $script_dir/calculate_performance_stats.sh
 else
     echo "Invalid args: Usage example"
     echo "./run.sh {rust/java}:{client/server} {rust/java}:{client/server} test:{1,2}"
