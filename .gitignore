@@ -3,3 +3,4 @@ java/*.h
 java/temp
 rust/*/target/
 rust/*/Cargo.lock
+test/Performance_*

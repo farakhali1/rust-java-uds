@@ -3,7 +3,8 @@ extern crate nix;
 use std::io::Read;
 use std::io::Write;
 use std::os::unix::net::UnixStream;
-use std::{thread, time};
+use std::thread;
+use std::time::{Duration, SystemTime};
 
 include!(concat!(env!("OUT_DIR"), "/proto/mod.rs"));
 use data::{Input, Result};
@@ -32,10 +33,16 @@ fn main() {
                 request.uid = String::from("my-random-uuid");
                 request.flag = true;
                 // println!("Message request:\nrequest {:#?}", request);
-                //start 1
+                let start_time_1 = SystemTime::now()
+                    .duration_since(SystemTime::UNIX_EPOCH)
+                    .expect("REASON")
+                    .as_nanos(); // Test 1 (start Timer)
                 let out_bytes: Vec<u8> = request.write_to_bytes().unwrap();
                 // println!("Resquest Message -> {:?}", out_bytes);
-                //start 2
+                let start_time_2 = SystemTime::now()
+                    .duration_since(SystemTime::UNIX_EPOCH)
+                    .expect("REASON")
+                    .as_nanos(); // Test 2 (start Timer)
                 if let Err(err) = stream.write_all(&out_bytes) {
                     println!("Error sending message: {:?}", err);
                     break;
@@ -45,8 +52,19 @@ fn main() {
                 match stream.read(&mut response) {
                     //end 2
                     Ok(n) if n > 0 => {
+                        let end_time_2 = SystemTime::now()
+                            .duration_since(SystemTime::UNIX_EPOCH)
+                            .expect("REASON")
+                            .as_nanos(); // Test 2 (stop Timer)
                         let response_message = Result::parse_from_bytes(&response[..n]).unwrap();
-                        //end 1
+                        let end_time_1 = SystemTime::now()
+                            .duration_since(SystemTime::UNIX_EPOCH)
+                            .expect("REASON")
+                            .as_nanos(); // Test 1 (stop Timer)
+
+                        let latency_1 = end_time_1 - start_time_1;
+                        let latency_2 = end_time_2 - start_time_2;
+                        println!("latency 1: {}, latency 1: {}", latency_1, latency_2);
                         let res: i32 = response_message.res;
                         let uint_value: u64 = response_message.uint_value;
                         let float_value1: f32 = response_message.float_value1;
@@ -54,7 +72,7 @@ fn main() {
                         let pubkey: String = response_message.pubkey;
                         let uid: String = response_message.uid;
                         let flag: bool = response_message.flag;
-                        println!("\nResponse from server: res: {}, uint_value: {}, float_value1: {}, float_value2: {}, pubkey: {}, uid: {}, flag: {}", res, uint_value, float_value1, float_value2, pubkey, uid, flag);
+                        // println!("\nResponse from server: res: {}, uint_value: {}, float_value1: {}, float_value2: {}, pubkey: {}, uid: {}, flag: {}", res, uint_value, float_value1, float_value2, pubkey, uid, flag);
                     }
                     Ok(_) => {
                         println!("Received an empty response from the server.");
@@ -64,13 +82,13 @@ fn main() {
                         break;
                     }
                 }
-                thread::sleep(time::Duration::from_millis(2));
+                // thread::sleep(Duration::from_secs(2));
             }
         }
         Err(err) => {
             println!("Failed to connect to the server: {:?}", err);
             println!("Retrying in 2 seconds...");
-            std::thread::sleep(std::time::Duration::from_secs(2));
+            std::thread::sleep(Duration::from_secs(2));
         }
     }
 }
