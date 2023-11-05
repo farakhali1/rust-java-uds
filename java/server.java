@@ -18,6 +18,7 @@ public class server {
 
       System.out.println("Server is waiting for client messages...");
       SocketChannel clientChannel = serverChannel.accept();
+      System.out.println("Server started");
       while (true) {
         if (clientChannel != null) {
           ByteBuffer buf = ByteBuffer.allocate(2048);
