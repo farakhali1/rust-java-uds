@@ -24,3 +24,14 @@ cargo build
 cargo run
 
 ```
+
+# How to run Tests
+```bash
+cd ./rust-java-uds/test
+
+# run the run.sh script
+./run.sh {rust/java}:{client/server} {rust/java}:{client/server} test:{1,2}
+
+# run test 1 with rust server and java client
+./run.sh rust:server java:client test:1
+```
